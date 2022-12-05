@@ -11,6 +11,11 @@ const routes = [
         name : 'foodmenu',
         component: () => import('./components/FoodMenu.vue'),
     },
+    {
+        path : '/ordermenu',
+        name : 'ordermenu',
+        component: () => import('./components/OrderMenu.vue'),
+    },
 
 ]
 

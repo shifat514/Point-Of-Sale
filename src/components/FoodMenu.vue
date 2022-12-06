@@ -1,7 +1,7 @@
 <template>
 <div>
     <h1>Foodmenu</h1>
-   <router-link to="./ordermenu">ordered Menu</router-link>
+   <router-link to="./selectmenu">selected Menu</router-link>
     <ul>
         <div>
             <li class="pointer" v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
@@ -26,10 +26,10 @@ export default {
     name: "foodmenu",
     data() {
         return {
-            orderMenu: {
-                id: '',
-                foodName: '',
-                price: '',
+            selectMenu: {
+                id: 0,
+                name: '',
+                price: 0,
             }
         };
     },
@@ -42,10 +42,20 @@ export default {
 
     methods: {
         addProduct(item) {
-            this.orderMenu = item;
-            console.log(this.orderMenu);
-            this.$emit('orderProduct', this.orderMenu);
-            this.$router.push('/ordermenu');
+            this.selectMenu = item;
+            console.log(this.selectMenu);
+
+            // for(let i=0; i<this.$store.state.selectList.length(); i++)
+            // {
+            //     if(item.id==this.$store.state.selectList.id)
+            //     {
+            //         this.$store.state.selectList.price+item.price;
+            //     }
+            // }
+
+
+            this.$emit('selectProduct', this.selectMenu);
+            this.$router.push('/selectmenu');
         }
     }
 }

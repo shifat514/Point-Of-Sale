@@ -12,9 +12,9 @@ const routes = [
         component: () => import('./components/FoodMenu.vue'),
     },
     {
-        path : '/ordermenu',
-        name : 'ordermenu',
-        component: () => import('./components/OrderMenu.vue'),
+        path : '/selectmenu',
+        name : 'selectmenu',
+        component: () => import('./components/SelectMenu.vue'),
     },
 
 ]

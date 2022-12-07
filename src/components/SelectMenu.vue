@@ -1,26 +1,33 @@
 <template>
-<div>
-    <div>
-        <li class="pointer" v-for="(item) in selectProductList" :key="item" :id=item.id>
+        <div class="grid grid-cols-2">
             <div>
-                {{ item.id }}.
+                <div class="">
+                    <h1 class="underline bg-slate-400">Selected menu</h1>
+                </div>
+                <div>
+                    <li class="pointer" v-for="(item) in selectProductList" :key="item" :id=item.id>
+                        <div>
+                            {{ item.id }}.
+                        </div>
+                        <div>
+                            Item: {{ item.name }}
+                        </div>
+                        <div>
+                            Price: {{ item.price }}
+                        </div>
+                        <br>
+                    </li>
+                </div>
+                <div>Charge : {{ selectCharge }} BDT</div>
+                <div>Vat : {{ vat }} BDT</div>
+                <div>SC : {{ serviceCharge }} BDT</div>
+                <div>Total Extra Charge : {{ extraCharge }} BDT</div>
+                <div>Total : {{ totalCharge }} BDT</div>
             </div>
             <div>
-                Item: {{ item.name }}
+                <FoodMenu @selectProduct="addedProduct" />
             </div>
-            <div>
-                Price: {{ item.price }}
-            </div>
-            <br>
-        </li>
-    </div>
-    <div>Charge : {{ selectCharge }}</div>
-    <div>Vat : {{ vat }}</div>
-    <div>SC : {{ serviceCharge }}</div>
-    <div>Extra Charge : {{ extraCharge }}</div>
-    <div>Total : {{ totalCharge }}</div>
-    <FoodMenu @selectProduct="addedProduct" />
-</div>
+        </div>
 </template>
 
 <script>
@@ -55,8 +62,8 @@ export default {
     methods: {
         calculateCharges(basicCharge) {
 
-            this.vat = .05*basicCharge;
-            this.serviceCharge = .10*basicCharge;
+            this.vat = .05 * basicCharge;
+            this.serviceCharge = .10 * basicCharge;
             this.extraCharge = this.vat + this.serviceCharge;
             this.totalCharge = basicCharge + this.extraCharge;
         },
@@ -85,7 +92,6 @@ export default {
 
             this.menu = JSON.parse(JSON.stringify(selectData)); // deep cloning an object
             let selectListLength = this.$store.getters.selectListLength;
-
             this.selectedProduct(selectListLength);
             this.calculateCharges(this.selectCharge);
         },

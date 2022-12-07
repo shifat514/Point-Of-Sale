@@ -1,6 +1,6 @@
 <template>
-<div>
-    <h1>Foodmenu</h1>
+<div class="bg-slate-300">
+    <h1 class="underline text-2xl">Foodmenu</h1>
    <router-link to="./selectmenu">selected Menu</router-link>
     <ul>
         <div>
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+
+
 export default {
     name: "foodmenu",
     data() {
@@ -44,18 +46,8 @@ export default {
         addProduct(item) {
             this.selectMenu = item;
             console.log(this.selectMenu);
-
-            // for(let i=0; i<this.$store.state.selectList.length(); i++)
-            // {
-            //     if(item.id==this.$store.state.selectList.id)
-            //     {
-            //         this.$store.state.selectList.price+item.price;
-            //     }
-            // }
-
-
             this.$emit('selectProduct', this.selectMenu);
-            this.$router.push('/selectmenu');
+           // this.$router.push('/selectmenu');
         }
     }
 }

@@ -16,6 +16,16 @@ const routes = [
         name : 'selectmenu',
         component: () => import('./components/SelectMenu.vue'),
     },
+    {
+        path : '/selectlayout',
+        name : 'selectlayout',
+        component: () => import('./components/layouts/SelectLayout.vue'),
+    },
+    {
+        path : '/selectmenu',
+        name : 'selectmenu',
+        component: () => import('./components/SelectMenu.vue'),
+    },
 
 ]
 

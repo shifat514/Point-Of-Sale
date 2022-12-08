@@ -1,8 +1,13 @@
+const autoprefixer = require('autoprefixer');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  // mode: "jit",
+  content: ['./public/*.html', 
+  './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+  ],
 }

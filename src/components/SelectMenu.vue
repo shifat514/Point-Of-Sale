@@ -1,33 +1,50 @@
 <template>
-        <div class="grid grid-cols-2">
-            <div>
-                <div class="">
-                    <h1 class="underline bg-slate-400">Selected menu</h1>
+    <div class="container">
+        <div class="grid grid-cols-3">
+            <div class="bg-slate-100 col-span-1">
+                <h1 class="text-white font-semibold bg-slate-800">Selected Menu</h1>
+                <div class=" bg-slate-100 flex justify-center ">
+                    <div class="grid grid-rows-1 static py-2">
+                        <div>
+                            <table class="table-fixed">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm">
+                                    <tr class="pointer" v-for="(item) in selectProductList" :key="item" :id=item.id>
+                                        <td>#{{ item.id }}</td>
+                                        <td>{{ item.name }}</td>
+                                        <td></td>
+                                        <td>{{ item.price }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                 </div>
-                <div>
-                    <li class="pointer" v-for="(item) in selectProductList" :key="item" :id=item.id>
-                        <div>
-                            {{ item.id }}.
-                        </div>
-                        <div>
-                            Item: {{ item.name }}
-                        </div>
-                        <div>
-                            Price: {{ item.price }}
-                        </div>
-                        <br>
-                    </li>
+                <div class="flex justify-center text-sm">
+                    <div class="absolute bottom-20">
+                        <div>Charge : {{ selectCharge }} BDT</div>
+                        <div>Vat : {{ vat }} BDT</div>
+                        <div>SC : {{ serviceCharge }} BDT</div>
+                        <div>Total Extra Charge : {{ extraCharge }} BDT</div>
+                        <div>Total : {{ totalCharge }} BDT</div>
+                    </div>
                 </div>
-                <div>Charge : {{ selectCharge }} BDT</div>
-                <div>Vat : {{ vat }} BDT</div>
-                <div>SC : {{ serviceCharge }} BDT</div>
-                <div>Total Extra Charge : {{ extraCharge }} BDT</div>
-                <div>Total : {{ totalCharge }} BDT</div>
+
             </div>
-            <div>
+            <div class="col-span-2">
                 <FoodMenu @selectProduct="addedProduct" />
             </div>
         </div>
+    </div>
+
 </template>
 
 <script>

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-
+import './assets/input.css'
 export default {
   name: 'App',
   components: {

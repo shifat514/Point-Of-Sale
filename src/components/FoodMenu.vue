@@ -1,29 +1,28 @@
 <template>
-<div class="bg-slate-300">
-    <h1 class="underline text-2xl">Foodmenu</h1>
-   <router-link to="./selectmenu">selected Menu</router-link>
-    <ul>
-        <div>
-            <li class="pointer" v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
-                <div>
-                    {{ item.id }}.
+    <div>
+        <h1 class="text-white font-semibold bg-slate-800">Menu</h1>
+        <div class="grid grid-cols-3 lg:gap-5 py-3">
+            <div v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
+                <div class="pointer text-sm border-2 shadow-sm border-slate-600 rounded  hover:bg-slate-800 hover:text-white
+                    hover:font-semibold">
+                    <div>
+                        ID #{{ item.id }}
+                    </div>
+                    <div class="font-medium">
+                        {{ item.name }}
+                    </div>
+                    <div>
+                        <span class="">{{ item.price }}</span>
+                        
+                    </div>
                 </div>
-                <div>
-                    Item: {{ item.name }}
-                </div>
-                <div>
-                    Price: {{ item.price }}
-                </div>
-                <br>
-            </li>
+            </div>
         </div>
-    </ul>
-</div>
+
+    </div>
 </template>
 
 <script>
-
-
 export default {
     name: "foodmenu",
     data() {
@@ -47,7 +46,7 @@ export default {
             this.selectMenu = item;
             console.log(this.selectMenu);
             this.$emit('selectProduct', this.selectMenu);
-           // this.$router.push('/selectmenu');
+            // this.$router.push('/selectmenu');
         }
     }
 }

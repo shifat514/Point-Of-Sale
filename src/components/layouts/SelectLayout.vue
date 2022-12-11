@@ -1,14 +1,6 @@
 <template>
     <div>
         hello
-   
-    <div class="absolute bottom-1 left-1 bg-slate-100">
-        <div>Charge : {{ selectCharge }} BDT</div>
-        <div>Vat : {{ vat }} BDT</div>
-        <div>SC : {{ serviceCharge }} BDT</div>
-        <div>Total Extra Charge : {{ extraCharge }} BDT</div>
-        <div>Total : {{ totalCharge }} BDT</div>
-    </div>
     <SelectMenu/>
     </div>
  

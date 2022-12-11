@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-white font-semibold bg-slate-800">Menu</h1>
+        <h1 class="text-white font-semibold bg-slate-700">Menu</h1>
         <div class="grid grid-cols-3 lg:gap-5 py-3">
             <div v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
                 <div class="pointer text-sm border-2 shadow-sm border-slate-600 rounded  hover:bg-slate-800 hover:text-white
@@ -30,6 +30,7 @@ export default {
             selectMenu: {
                 id: 0,
                 name: '',
+                quantity: 0,
                 price: 0,
             }
         };
@@ -44,9 +45,7 @@ export default {
     methods: {
         addProduct(item) {
             this.selectMenu = item;
-            console.log(this.selectMenu);
             this.$emit('selectProduct', this.selectMenu);
-            // this.$router.push('/selectmenu');
         }
     }
 }

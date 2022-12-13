@@ -26,6 +26,12 @@ const routes = [
         name : 'selectmenu',
         component: () => import('./components/SelectMenu.vue'),
     },
+    {
+        path : '/selecttable/:id',
+        name : 'selecttable',
+        props:true,
+        component: () => import('./components/SelectTable.vue'),
+    },
 
 ]
 

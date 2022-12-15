@@ -3,7 +3,7 @@
         <div class="grid grid-cols-3">
             <div class="bg-blue-50 col-span-1">
                 <h1 class="text-white font-semibold bg-slate-700">Ordered Menu</h1>
-                <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.id }}</h5>
+                <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.orderId }}</h5>
                 <div class="flex justify-center ">
                     <div class="grid grid-rows-1 static py-2">
                         <table class="w-full table-auto">
@@ -15,7 +15,7 @@
                                     <th class="w-1/6 px-7">Price</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm">
+                            <tbody v-if="isTableSelect == true" class="text-sm">
                                 <tr class="pointer" v-for="(item) in getOrderDetails.menu" :key="item.id">
 
                                     <td>{{ item.id }}</td>
@@ -27,7 +27,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="absolute bottom-20 flex justify-center">
+                <div v-if=" isTableSelect == true" class="absolute bottom-20 flex justify-center">
                     <div class="">
                         <div class="grid grid-cols-2">
                             <div>
@@ -56,24 +56,26 @@
                                 </div>
                             </div>
                         </div>
-                        <button @click="updateOrder()" class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Update</button>
-                      <button @click="checkOut()" class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Checkout</button>
+                        
+                          <button @click="orderAgain()" class="bg-gray-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Order again</button>
+                          <button @click="updateOrder()" class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Update</button>
+                        <button class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Checkout</button>
                     </div>
                 </div>
             </div>
-            <div class="col-span-2">
+            <div  class="col-span-2">
                 <h1 class="text-white font-semibold bg-slate-400">Select a Table</h1>
                 <div class="grid grid-cols-3 lg:gap-5 py-3">
                     <div v-for="table in tableList" :key="table.id">
 
-                        <div v-if="table.select == false" @click="selectTable(table.id)" class="pointer text-sm border-2 shadow-sm border-slate-600 rounded  hover:bg-slate-800 hover:text-white
+                        <div v-if="table.select == false"  class="pointer rounded text-sm  border-slate-600  border-2 shadow-sm  hover:bg-slate-800 hover:text-white
                          hover:font-semibold">
                             <div>
                                 {{ table.name }} #{{ table.id }}
                             </div>
                         </div>
-
-                        <div  v-else class="pointer text-slate-400 border-2 shadow-sm border-slate-300 rounded">
+                        
+                        <div  v-else @click="selectTable(table.id)" class="pointer rounded text-sm  text-slate-400 border-2 shadow-sm border-slate-300 ">
                             <div>
                                 {{ table.name }} #{{ table.id }}
                             </div>
@@ -88,22 +90,23 @@
 
 <script>
 export default {
-    props: ['id'],
+   
     data() {
         return {
+            orderId: 0,
             disabled: true,
-            executed: false,
+           // executed: false,
+            isTableSelect : false,
         };
     },
     computed: {
-        orderList() {
+        orderDetails() {
             return this.$store.getters.getOrderList;
         },
         getOrderDetails() {
-            console.log(this.id);
-            let orderDetails = this.$store.getters.getOrderList.find(element => element.id = this.id);
-            console.log(orderDetails);
-            return orderDetails;
+            let abc = this.$store.getters.getOrderList.find(element => element.id = this.orderId);
+            console.log("amar consoel", abc);
+            return abc;
         },
         tableList() {
             return this.$store.getters.getTableList;
@@ -111,31 +114,29 @@ export default {
 
     },
     methods: {
-        
-       
-        // updateOrder() {
-        //     this.$router.push("/")
-        // },
-        checkOut() {
-          this.$router.push("/showtables/");
+        orderAgain() {
+            this.$router.push("/selectMenu/");
         },
         selectTable(tableId) {
-            if(this.executed == false) {       
-              
-                console.log("order er deitals",this.getOrderDetails);
-                for( let i = 0; i<this.tableList.length; i++) {
-                    if(this.tableList[i].id == tableId)
+            
+            for( let i = 0; i<this.tableList.length; i++) {
+                
+                if(this.tableList[i].id == tableId)
+                {
+                    if(this.tableList[i].orderId != null)
                     {
-                        this.getOrderDetails.tableNo = tableId;
-                        this.tableList[i].select = true;
-                        this.tableList[i].orderId = this.id;
-                       // console.log(this.tableList[i].orderId);
+                        this.orderId = this.tableList[i].orderId;
+                        console.log("order er deitals on showtable",this.getOrderDetails);
+                            this.isTableSelect = true;
+                            
+                        }
+                       
                     }
                 }
-               
-                this.executed = true;
-              
-            }
+              //  this.executed = true;
+
+              //  console.log(this.getOrderDetails);
+          // }
 
         }
     },

@@ -3,6 +3,7 @@
         <div v-if="isAlert == false" class="grid grid-cols-3">
             <div class="bg-slate-100 col-span-1">
                 <h1 class="text-white font-semibold bg-slate-700">Selected Menu</h1>
+                <h5 v-if="this.id != 0" class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.orderId }}</h5>
                 <div class=" bg-slate-100 flex justify-center ">
                     <div class="grid grid-rows-1 static py-2">
                         <table class="w-full table-auto">
@@ -16,21 +17,21 @@
                             </thead>
                             <tbody class="text-sm">
                                 <tr class="pointer" v-for="(item, index) in selectProductList" :key="index" :id=item.id>
-                                    <td>#{{ item.id }}</td>
+                                    <td>{{ item.id }}</td>
                                     <td>{{ item.name }}</td>
-                                    <td class="flex justify-center px-3">
-                                        <button @click="decreaseQuantity(item, index)" class="h-6 w-5 border-2
-                                         border-red-400 text-red-700  
+                                    <td class="flex justify-center px-3 py-1">
+                                        <button @click="decreaseQuantity(item, index)" class="h-5 w-5 border-2 flex items-center justify-center
+                                         border-red-400 text-red-400  
                                          cursor-pointer rounded-full font-bold">
-                                            <span class="self-center flex items-center justify-center">-</span>
+                                            <div>-</div>
                                         </button>
                                         <span class="px-2">
                                             {{ item.quantity }}
                                         </span>
-                                        <button @click="increaseQuantity(item, index)" class="h-6 w-5 border-2
+                                        <button @click="increaseQuantity(item, index)" class="h-5 w-5 border-2 flex items-center justify-center
                                          border-emerald-300 text-green-700  
                                          cursor-pointer rounded-full font-bold">
-                                            <span class="self-center flex items-center justify-center">+</span>
+                                            <div>+</div>
                                         </button>
                                     </td>
                                     <td>{{ item.price }}</td>
@@ -91,9 +92,6 @@
         <div v-else class="bg-gray-400 flex justify-center">
             <div class="grid h-screen place-items-center bg-black bg-opacity-50">
                 <div class="bg-white rounded shadow-lg w-1/3 fixed  justify-center items-center">
-                    <!-- <div class="border-b px-4 py-2">
-                        <p>Alert</p>
-                    </div> -->
                     <div class="px-4 py-2">
                         <p>Are you sure you want to remove this item?</p>
                     </div>
@@ -122,7 +120,7 @@ export default {
                 quantity: 0,
                 price: 0,
             },
-
+            orderId: 0,
             isAlert: false,
             removeItem: false,
             selectCharge: 0,
@@ -132,62 +130,94 @@ export default {
             totalCharge: 0,
             selectedIndex: 0,
             disabled:true,
+            chargeFromOrder:0,
             selectedItem: {
                 id: 0,
                 name: '',
                 quantity: 0,
                 price: 0,
-            },
-            //isdisabled:false,
-            orderedMenu: {
-                id: 0,
-                name: '',
-                price: 0,
+            },       
+            // orderedMenu: {
+            //     id: 0,
+            //     name: '',
+            //     price: 0,
                 
-            },
-           // displayChild:false,
+            // },
         };
     },
 
     components: {
         FoodMenu
     },
-
+    mounted() {
+        //this.getOrderList();
+       // console.log("this component");
+    },
     computed: {
         selectProductList() {
             return this.$store.getters.getSelectList;
         },
-
+        orderList() {
+            return this.$store.getters.getOrderList;
+        }
+        
     },
 
     methods: {
         confirmOrder() {
-            const id = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
+            //if()
             
+            this.orderId = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
+            console.log(this.selectCharge);
             let orderData = {
-                orderId : id,
+                orderId : this.orderId,
                 menu: this.selectProductList,
                 vat: this.vat,
                 tableNo: null,
+                basicCharge: this.selectCharge,
                 serviceCharge: this.serviceCharge,
                 totalPrice: this.totalCharge,
             };
             
+            console.log("amr orderData", orderData);
             this.$store.dispatch("addOrder",orderData);
-            this.$router.push('/selecttable/'+id);
-            //let orderIndex = this.$store.getSelectList[]
-            //console.log(this.$store.getters.getOrderList[0].OrderId);
+            this.$store.commit("resetSelectState");
+            console.log(this.orderList);
+            this.$router.push('/selecttable/'+this.orderId);
            
         },
+
+        // getOrderList() {
+        //     console.log("hello from getOrderList");
+        //     for( let i = 0; i<this.orderList.length; i++) {
+        //         console.log(this.orderList[i].orderId, this.orderList[i].basicCharge);
+        //             if(this.orderList[i].orderId == null)
+        //             {   
+        //                 this.selectCharge = 0;
+        //                // this.chargeFromOrder = 0;
+        //                 this.vat = 0;
+        //                 this.serviceCharge = 0;
+        //                 this.extraCharge = 0;
+        //                 this.totalCharge = 0; 
+        //             }
+        //             else {
+        //                 this.orderId = this.orderList[i].orderId;
+        //                 this.selectCharge = this.orderList[i].basicCharge;
+        //                 this.calculateCharges(this.selectCharge);
+        //             }
+        //     }
+        // },
 
         removeProduct() {
             this.removeItem = true;
             if (this.removeItem == true) {
 
-                this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
-                this.$store.getters.getSelectList[this.selectedIndex].quantity -= 1;
-                this.selectCharge -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
-                this.calculateCharges(this.selectCharge);
+                 this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
+                 this.$store.getters.getSelectList[this.selectedIndex].quantity -= 1;
+                 this.selectCharge -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
+                 this.calculateCharges(this.selectCharge);
+                // this.chargeFromOrder -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
+                // this.calculateCharges(this.chargeFromOrder);
                 this.$store.dispatch('removeProduct', this.selectedIndex);
                 this.isAlert = false;
                 if(this.$store.getters.selectListLength == 0)
@@ -211,6 +241,8 @@ export default {
                 this.$store.getters.getSelectList[index].quantity -= 1;
                 this.selectCharge -= this.$store.getters.getProductList[item.id - 1].price;
                 this.calculateCharges(this.selectCharge);
+                // this.chargeFromOrder -= this.$store.getters.getProductList[item.id - 1].price;
+                // this.calculateCharges(this.chargeFromOrder);
             }
         },
 
@@ -219,6 +251,8 @@ export default {
             this.$store.getters.getSelectList[index].quantity += 1;
             this.selectCharge += this.$store.getters.getProductList[item.id - 1].price;
             this.calculateCharges(this.selectCharge);
+            // this.chargeFromOrder += this.$store.getters.getProductList[item.id - 1].price;
+            // this.calculateCharges(this.chargeFromOrder);
         },
 
         calculateCharges(basicCharge) {
@@ -232,6 +266,7 @@ export default {
         selectedProduct(listLength) {
             if (listLength < 1) {
                 this.selectCharge += this.menu.price;
+                // this.chargeFromOrder += this.menu.price;
                 this.menu.quantity += 1;
                 this.$store.dispatch('selectMenu', this.menu);
                 this.disabled = false;
@@ -244,16 +279,19 @@ export default {
                         this.$store.getters.getSelectList[i].price += this.menu.price;
                         this.$store.getters.getSelectList[i].quantity += 1;
                         this.selectCharge += this.menu.price;
+                    //   this.chargeFromOrder += this.menu.price;
                         this.disabled = false;
                     }
                 }
                 if (flag == 0) {
                     this.menu.quantity += 1;
                     this.selectCharge += this.menu.price;
+                //    this.chargeFromOrder += this.menu.price;
                     this.$store.dispatch('selectMenu', this.menu);
                     this.disabled = false;
                 }
             }
+            console.log(this.selectCharge);
         },
 
         addedProduct(selectData) {

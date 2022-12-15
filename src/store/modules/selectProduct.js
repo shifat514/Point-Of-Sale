@@ -15,6 +15,10 @@ const mutations = {
     },
     removeFromMenu(state,payload) {
         state.selectList.splice(payload,1);
+    },
+
+    resetSelectState (state) {
+       state.selectList = [];
     }
 
 };
@@ -26,7 +30,11 @@ const actions = {
 
     removeProduct(context,payload) {
         context.commit("removeFromMenu",payload);
-    }
+    },
+    // resetSelectMenu() {
+    //     store.commit("resetState");
+    // }
+    
 };
 
 

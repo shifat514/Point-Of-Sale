@@ -3,12 +3,12 @@
         <h1 class="text-white font-semibold bg-slate-700">Menu</h1>
         <div class="grid grid-cols-3 lg:gap-5 py-3">
             <div v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
-                <div class="pointer text-sm border-2 shadow-sm border-slate-600 rounded  hover:bg-slate-800 hover:text-white
+                <div class="pointer text-sm border-4 shadow-sm border-slate-300 rounded  hover:bg-slate-800 hover:text-white hover:rounded hover:border-slate-800
                     hover:font-semibold">
                     <div>
                         ID #{{ item.id }}
                     </div>
-                    <div class="font-medium">
+                    <div class="font-semibold">
                         {{ item.name }}
                     </div>
                     <div>

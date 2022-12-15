@@ -32,6 +32,12 @@ const routes = [
         props:true,
         component: () => import('./components/SelectTable.vue'),
     },
+    {
+        path : '/showtables/',
+        name : 'showtables',
+        
+        component: () => import('./components/showTables.vue'),
+    },
 
 ]
 

@@ -1,9 +1,10 @@
 <template>
     <div class="container">
-        <div class="grid grid-cols-3">
+        <div v-if="isAlert == false" class="grid grid-cols-3">
             <div class="bg-blue-50 col-span-1">
                 <h1 class="text-white font-semibold bg-slate-700">Ordered Menu</h1>
-                <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.orderId }}</h5>
+                <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order
+                        Id</span>#{{ this.orderId }}</h5>
                 <div class="flex justify-center ">
                     <div class="grid grid-rows-1 static py-2">
                         <table class="w-full table-auto">
@@ -16,22 +17,40 @@
                                 </tr>
                             </thead>
                             <tbody v-if="isTableSelect == true" class="text-sm">
-                                <tr class="pointer" v-for="(item) in getOrderDetails.menu" :key="item.id">
+                                <tr class="pointer" v-for="(item) in orderData.menu" :key="item.id">
 
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.name }}</td>
-                                    <td class="flex justify-center px-3">{{ item.quantity }}</td>
+                                    <td class="flex justify-center px-3">
+                                        <button @click="decreaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
+                                         border-red-400 text-red-400  
+                                         cursor-pointer rounded-full font-bold">
+                                            <div>-</div>
+                                        </button>
+
+                                        <span class="px-2">
+                                            {{ item.quantity }}
+                                        </span>
+
+                                        <button @click="increaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
+                                         border-emerald-300 text-green-700  
+                                         cursor-pointer rounded-full font-bold">
+                                            <div>+</div>
+                                        </button>
+                                    </td>
                                     <td>{{ item.price }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div v-if=" isTableSelect == true" class="absolute bottom-20 flex justify-center">
+                <div v-if="isTableSelect == true" class="absolute bottom-20 flex justify-center">
                     <div class="">
                         <div class="grid grid-cols-2">
                             <div>
-
+                                <div>
+                                    Sub Total Price
+                                </div>
                                 <div>
                                     VAT (5%)
                                 </div>
@@ -45,37 +64,46 @@
                             <div>
                                 <div>
                                     <div>
-                                        {{ getOrderDetails.vat }} BDT
+                                        {{ orderData.basicCharge }} BDT
                                     </div>
                                     <div>
-                                        {{ getOrderDetails.serviceCharge }} BDT
+                                        {{ orderData.vat }} BDT
                                     </div>
                                     <div>
-                                        {{ getOrderDetails.totalPrice }} BDT
+                                        {{ orderData.serviceCharge }} BDT
+                                    </div>
+
+                                    <div>
+                                        {{ orderData.totalPrice }} BDT
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                          <button @click="orderAgain()" class="bg-gray-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Order again</button>
-                          <button @click="updateOrder()" class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Update</button>
-                        <button class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Checkout</button>
+
+                        <button @click="orderAgain()"
+                            class="bg-gray-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Order
+                            again</button>
+                        <button @click="updateOrder()"
+                            class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Update</button>
+                        <button
+                            class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Checkout</button>
                     </div>
                 </div>
             </div>
-            <div  class="col-span-2">
+            <div class="col-span-2">
                 <h1 class="text-white font-semibold bg-slate-400">Select a Table</h1>
                 <div class="grid grid-cols-3 lg:gap-5 py-3">
                     <div v-for="table in tableList" :key="table.id">
 
-                        <div v-if="table.select == false"  class="pointer rounded text-sm  border-slate-600  border-2 shadow-sm  hover:bg-slate-800 hover:text-white
+                        <div v-if="table.select == false" class="pointer rounded text-sm  border-slate-600  border-2 shadow-sm  hover:bg-slate-800 hover:text-white
                          hover:font-semibold">
                             <div>
                                 {{ table.name }} #{{ table.id }}
                             </div>
                         </div>
-                        
-                        <div  v-else @click="selectTable(table.id)" class="pointer rounded text-sm  text-slate-400 border-2 shadow-sm border-slate-300 ">
+
+                        <div v-else @click="showTables(table.id)"
+                            class="pointer rounded text-sm  text-slate-400 border-2 shadow-sm border-slate-300 ">
                             <div>
                                 {{ table.name }} #{{ table.id }}
                             </div>
@@ -85,58 +113,155 @@
             </div>
         </div>
 
+
+        <div v-else class="bg-gray-400 flex justify-center">
+            <div class="grid h-screen place-items-center bg-black bg-opacity-50">
+                <div class="bg-white rounded shadow-lg w-1/3 fixed  justify-center items-center">
+                    <div class="px-4 py-2">
+                        <p>Are you sure you want to remove this item?</p>
+                    </div>
+                    <div class="flex justify-end items-center w-100 border-t p-3">
+                        <button @click="isAlert = false;"
+                            class="bg-gray-500 hover:bg-slate-700 text-white px-3 py-1 rounded mr-1">Cancel</button>
+                        <button @click="removeProduct();"
+                            class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded mr-1">Yes</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
 <script>
+
 export default {
-   
+
     data() {
         return {
             orderId: 0,
             disabled: true,
-           // executed: false,
-            isTableSelect : false,
+            isAlert: false,
+            // executed: false,
+            isTableSelect: false,
+            orderData: {
+                orderId: 0,
+                menu: null,
+                vat: 0,
+                tableNo: 0,
+                basicCharge: 0,
+                serviceCharge: 0,
+                totalPrice: 0,
+            },
+            removeItem: false,
+            itemToRemove: null,
         };
     },
     computed: {
-        orderDetails() {
+        orderList() {
             return this.$store.getters.getOrderList;
-        },
-        getOrderDetails() {
-            let abc = this.$store.getters.getOrderList.find(element => element.id = this.orderId);
-            console.log("amar consoel", abc);
-            return abc;
         },
         tableList() {
             return this.$store.getters.getTableList;
-        }
-
+        },
+        productList() {
+            return this.$store.getters.getProductList;
+        },
     },
+
+
     methods: {
+        removeProduct() {
+            this.removeItem = true;
+            this.decreaseQuantity(this.itemToRemove);
+        },
+        getOrderDetails() {
+            for (let i = 0; i < this.orderList.length; i++) {
+                console.log(this.orderId);
+                if (this.orderList[i].orderId == this.orderId) {
+                    this.orderData.menu = this.orderList[i].menu;
+                    this.orderData.vat = this.orderList[i].vat;
+                    this.orderData.basicCharge = this.orderList[i].basicCharge;
+                    this.orderData.serviceCharge = this.orderList[i].serviceCharge;
+                    this.orderData.totalPrice = this.orderList[i].totalPrice;
+                }
+            }
+        },
+        decreaseQuantity(item) {
+
+            for (let i = 0; i < this.orderList.length; i++) {
+                for (let j = 0; j < this.orderList[i].menu.length; j++) {
+
+                    if (this.orderList[i].menu[j].id == item.id) {
+                        let productFromProductList = this.productList.find(element => element.id == item.id);
+                        console.log(productFromProductList);
+
+                        if (this.removeItem == true) {
+                            this.orderList[i].menu[j].quantity -= 1;
+                            this.orderList[i].menu[j].price -= productFromProductList.price;
+                            this.orderList[i].basicCharge -= productFromProductList.price;
+                            this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
+                            this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                            this.orderList[i].totalPrice = this.orderList[i].basicCharge + this.orderList[i].vat + this.orderList[i].serviceCharge;
+                            this.orderList[i].menu.splice(this.orderList[i].menu[j], 1);
+                            this.removeItem = false;
+                            this.isAlert = false;
+                            this.getOrderDetails();
+                        }
+                        else {
+                            if (this.orderList[i].menu[j].quantity == 1) {
+                                this.itemToRemove = item;
+                                this.isAlert = true;
+                            }
+                            else {
+                                this.orderList[i].menu[j].quantity -= 1;
+                                this.orderList[i].menu[j].price -= productFromProductList.price;
+                                this.orderList[i].basicCharge -= productFromProductList.price;
+                                this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
+                                this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                                this.orderList[i].totalPrice = this.orderList[i].basicCharge + this.orderList[i].vat + this.orderList[i].serviceCharge;
+                                this.getOrderDetails();
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        increaseQuantity(item) {
+            for (let i = 0; i < this.orderList.length; i++) {
+
+                for (let j = 0; j < this.orderList[i].menu.length; j++) {
+
+                    if (this.orderList[i].menu[j].id == item.id) {
+                        let productFromProductList = this.productList.find(element => element.id == item.id);
+                        console.log(productFromProductList);
+                        this.orderList[i].menu[j].quantity += 1;
+                        this.orderList[i].menu[j].price += productFromProductList.price;
+                        this.orderList[i].basicCharge += productFromProductList.price;
+                        this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
+                        this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                        this.orderList[i].totalPrice = this.orderList[i].basicCharge + this.orderList[i].vat + this.orderList[i].serviceCharge;
+                        this.getOrderDetails();
+                    }
+                }
+            }
+        },
+
         orderAgain() {
             this.$router.push("/selectMenu/");
         },
-        selectTable(tableId) {
-            
-            for( let i = 0; i<this.tableList.length; i++) {
-                
-                if(this.tableList[i].id == tableId)
-                {
-                    if(this.tableList[i].orderId != null)
-                    {
-                        this.orderId = this.tableList[i].orderId;
-                        console.log("order er deitals on showtable",this.getOrderDetails);
-                            this.isTableSelect = true;
-                            
-                        }
-                       
-                    }
-                }
-              //  this.executed = true;
+        showTables(tableId) {
+            console.log("table Id: ", tableId);
+            for (let i = 0; i < this.tableList.length; i++) {
 
-              //  console.log(this.getOrderDetails);
-          // }
+                if (this.tableList[i].id == tableId) {
+                    this.orderId = this.tableList[i].orderId;
+                    this.getOrderDetails();
+                    this.isTableSelect = true;
+                }
+            }
 
         }
     },

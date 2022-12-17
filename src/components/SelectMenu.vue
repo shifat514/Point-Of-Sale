@@ -164,6 +164,7 @@ export default {
     },
 
     methods: {
+        
         confirmOrder() {
             //if()
             

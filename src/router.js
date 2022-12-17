@@ -36,7 +36,7 @@ const routes = [
         path : '/showtables/',
         name : 'showtables',
         
-        component: () => import('./components/showTables.vue'),
+        component: () => import('./components/ShowTables.vue'),
     },
 
 ]

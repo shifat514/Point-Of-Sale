@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
-        <div v-if="isAlert == false" class="grid grid-cols-3">
+    <div>
+        <div v-if="isAlert == false" class="grid grid-cols-3 h-screen m-6">
             <div class="bg-slate-100 col-span-1">
-                <h1 class="text-white font-semibold bg-slate-700">Selected Menu</h1>
-                <h5 v-if="this.id != 0" class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.orderId }}</h5>
+                <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Selected Menu</div>
+                <h5 v-if="this.id != 0" class="text-slate-700 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.orderId }}</h5>
                 <div class=" bg-slate-100 flex justify-center ">
                     <div class="grid grid-rows-1 static py-2">
                         <table class="w-full table-auto">
@@ -137,21 +137,11 @@ export default {
                 quantity: 0,
                 price: 0,
             },       
-            // orderedMenu: {
-            //     id: 0,
-            //     name: '',
-            //     price: 0,
-                
-            // },
         };
     },
 
     components: {
         FoodMenu
-    },
-    mounted() {
-        //this.getOrderList();
-       // console.log("this component");
     },
     computed: {
         selectProductList() {
@@ -166,7 +156,6 @@ export default {
     methods: {
         
         confirmOrder() {
-            //if()
             
             this.orderId = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
             console.log(this.selectCharge);
@@ -178,6 +167,7 @@ export default {
                 basicCharge: this.selectCharge,
                 serviceCharge: this.serviceCharge,
                 totalPrice: this.totalCharge,
+                paidBill: false,
             };
             
             console.log("amr orderData", orderData);
@@ -188,37 +178,14 @@ export default {
            
         },
 
-        // getOrderList() {
-        //     console.log("hello from getOrderList");
-        //     for( let i = 0; i<this.orderList.length; i++) {
-        //         console.log(this.orderList[i].orderId, this.orderList[i].basicCharge);
-        //             if(this.orderList[i].orderId == null)
-        //             {   
-        //                 this.selectCharge = 0;
-        //                // this.chargeFromOrder = 0;
-        //                 this.vat = 0;
-        //                 this.serviceCharge = 0;
-        //                 this.extraCharge = 0;
-        //                 this.totalCharge = 0; 
-        //             }
-        //             else {
-        //                 this.orderId = this.orderList[i].orderId;
-        //                 this.selectCharge = this.orderList[i].basicCharge;
-        //                 this.calculateCharges(this.selectCharge);
-        //             }
-        //     }
-        // },
-
         removeProduct() {
             this.removeItem = true;
             if (this.removeItem == true) {
 
-                 this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
+                 this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price; 
                  this.$store.getters.getSelectList[this.selectedIndex].quantity -= 1;
-                 this.selectCharge -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
+                 this.selectCharge -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price; 
                  this.calculateCharges(this.selectCharge);
-                // this.chargeFromOrder -= this.$store.getters.getProductList[this.selectedItem.id - 1].price;
-                // this.calculateCharges(this.chargeFromOrder);
                 this.$store.dispatch('removeProduct', this.selectedIndex);
                 this.isAlert = false;
                 if(this.$store.getters.selectListLength == 0)
@@ -238,22 +205,18 @@ export default {
                 this.selectedItem = item;
             }
             else {
-                this.$store.getters.getSelectList[index].price -= this.$store.getters.getProductList[item.id - 1].price;
+                this.$store.getters.getSelectList.find(element => element.id == item.id).price -= this.$store.getters.getProductList.find(element => element.id == item.id).price;
                 this.$store.getters.getSelectList[index].quantity -= 1;
-                this.selectCharge -= this.$store.getters.getProductList[item.id - 1].price;
+                this.selectCharge -=  this.$store.getters.getProductList.find(element => element.id == item.id).price;
                 this.calculateCharges(this.selectCharge);
-                // this.chargeFromOrder -= this.$store.getters.getProductList[item.id - 1].price;
-                // this.calculateCharges(this.chargeFromOrder);
             }
         },
 
         increaseQuantity(item, index) {
-            this.$store.getters.getSelectList[index].price += this.$store.getters.getProductList[item.id - 1].price;
+            this.$store.getters.getSelectList.find(element => element.id == item.id).price += this.$store.getters.getProductList.find(element => element.id == item.id).price;
             this.$store.getters.getSelectList[index].quantity += 1;
-            this.selectCharge += this.$store.getters.getProductList[item.id - 1].price;
+            this.selectCharge +=  this.$store.getters.getProductList.find(element => element.id == item.id).price;
             this.calculateCharges(this.selectCharge);
-            // this.chargeFromOrder += this.$store.getters.getProductList[item.id - 1].price;
-            // this.calculateCharges(this.chargeFromOrder);
         },
 
         calculateCharges(basicCharge) {
@@ -267,7 +230,6 @@ export default {
         selectedProduct(listLength) {
             if (listLength < 1) {
                 this.selectCharge += this.menu.price;
-                // this.chargeFromOrder += this.menu.price;
                 this.menu.quantity += 1;
                 this.$store.dispatch('selectMenu', this.menu);
                 this.disabled = false;
@@ -280,19 +242,16 @@ export default {
                         this.$store.getters.getSelectList[i].price += this.menu.price;
                         this.$store.getters.getSelectList[i].quantity += 1;
                         this.selectCharge += this.menu.price;
-                    //   this.chargeFromOrder += this.menu.price;
                         this.disabled = false;
                     }
                 }
                 if (flag == 0) {
                     this.menu.quantity += 1;
                     this.selectCharge += this.menu.price;
-                //    this.chargeFromOrder += this.menu.price;
                     this.$store.dispatch('selectMenu', this.menu);
                     this.disabled = false;
                 }
             }
-            console.log(this.selectCharge);
         },
 
         addedProduct(selectData) {

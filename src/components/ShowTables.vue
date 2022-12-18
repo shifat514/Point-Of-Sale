@@ -1,8 +1,8 @@
 <template>
     <div class="container">
-        <div v-if="isAlert == false" class="grid grid-cols-3">
+        <div v-if="isAlert == false" class="grid grid-cols-3 m-6">
             <div class="bg-blue-50 col-span-1">
-                <h1 class="text-white font-semibold bg-slate-700">Ordered Menu</h1>
+                <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Ordered Menu</div>
                 <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order
                         Id</span>#{{ this.orderId }}</h5>
                 <div class="flex justify-center ">
@@ -22,7 +22,7 @@
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.name }}</td>
                                     <td class="flex justify-center px-3">
-                                        <button @click="decreaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
+                                        <button v-if="isUpdateOrder == true" @click="decreaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
                                          border-red-400 text-red-400  
                                          cursor-pointer rounded-full font-bold">
                                             <div>-</div>
@@ -32,7 +32,7 @@
                                             {{ item.quantity }}
                                         </span>
 
-                                        <button @click="increaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
+                                        <button v-if="isUpdateOrder == true" @click="increaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
                                          border-emerald-300 text-green-700  
                                          cursor-pointer rounded-full font-bold">
                                             <div>+</div>
@@ -84,28 +84,41 @@
                             class="bg-gray-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Order
                             again</button>
                         <button @click="updateOrder()"
-                            class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Update</button>
-                        <button
-                            class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Checkout</button>
+                            class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-md py-1 px-2 mr-2">Update Order</button>
+                        <button @click="goToPayBill()"
+                            class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Pay Bill</button>
                     </div>
                 </div>
             </div>
             <div class="col-span-2">
-                <h1 class="text-white font-semibold bg-slate-400">Select a Table</h1>
+                <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Show Table Orders</h1>
                 <div class="grid grid-cols-3 lg:gap-5 py-3">
                     <div v-for="table in tableList" :key="table.id">
 
-                        <div v-if="table.select == false" class="pointer rounded text-sm  border-slate-600  border-2 shadow-sm  hover:bg-slate-800 hover:text-white
+                        <div v-if="table.select == false" class="pointer 
+                        text-sm border-2    
+                        font-bold border-slate-700 
+                        rounded
+                        text-white
+                        bg-slate-700
+                        
+                        hover:bg-white hover:text-slate-800 
                          hover:font-semibold">
-                            <div>
-                                {{ table.name }} #{{ table.id }}
-                            </div>
+                         <div class="grid grid-rows-2 items-center justify-center">
+                            <div> {{ table.name }} #{{ table.id }}</div>
+                        <div class="flex items-center justify-center hover:font-semibold">
+                            <Icon width="25"  icon="material-symbols:table-restaurant" style="color: white;"/>
+                        </div>
+                        </div>
                         </div>
 
                         <div v-else @click="showTables(table.id)"
                             class="pointer rounded text-sm  text-slate-400 border-2 shadow-sm border-slate-300 ">
-                            <div>
-                                {{ table.name }} #{{ table.id }}
+                            <div class="grid grid-rows-2 items-center justify-center">
+                            <div> {{ table.name }} #{{ table.id }}</div>
+                            <div class="flex items-center justify-center hover:font-semibold">
+                                <Icon width="25"  icon="material-symbols:table-restaurant" style="color:slategray;"/>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -135,9 +148,11 @@
 </template>
 
 <script>
-
+import { Icon } from '@iconify/vue';
 export default {
-
+    components: {
+    Icon,
+    },
     data() {
         return {
             orderId: 0,
@@ -156,6 +171,7 @@ export default {
             },
             removeItem: false,
             itemToRemove: null,
+            isUpdateOrder: false,
         };
     },
     computed: {
@@ -172,9 +188,15 @@ export default {
 
 
     methods: {
+        goToPayBill() {
+            this.$router.push('/paybill/'+this.orderId);
+        },
+        updateOrder() {
+            this.isUpdateOrder = true;
+        },
         removeProduct() {
-            this.removeItem = true;
-            this.decreaseQuantity(this.itemToRemove);
+           // this.removeItem = true;
+           // this.decreaseQuantity(this.itemToRemove);
         },
         getOrderDetails() {
             for (let i = 0; i < this.orderList.length; i++) {
@@ -212,7 +234,7 @@ export default {
                         else {
                             if (this.orderList[i].menu[j].quantity == 1) {
                                 this.itemToRemove = item;
-                                this.isAlert = true;
+                               // this.isAlert = true;
                             }
                             else {
                                 this.orderList[i].menu[j].quantity -= 1;

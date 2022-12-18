@@ -38,6 +38,12 @@ const routes = [
         
         component: () => import('./components/ShowTables.vue'),
     },
+    {
+        path : '/paybill/:orderId',
+        name : 'paybill',
+        props:true,
+        component: () => import('./components/PayBill.vue'),
+    },
 
 ]
 

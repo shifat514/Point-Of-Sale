@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="grid grid-cols-3">
+    <div class="grid grid-cols-3 m-6">
       <div class="bg-blue-50 col-span-1">
-        <h1 class="text-white font-semibold bg-slate-700">Ordered Menu</h1>
+        <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Ordered Menu</div>
         <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1">
           <span class="font-semibold">Order Id</span>#{{ this.id }}
         </h5>
@@ -44,7 +44,7 @@
                 </div>
               </div>
             </div>
-            <button @click="updateOrder()" class="
+            <!-- <button @click="updateOrder()" class="
                 bg-cyan-700
                 hover:bg-cyan-200 hover:text-cyan-800
                 text-white
@@ -54,7 +54,7 @@
                 mr-2
               ">
               Update
-            </button>
+            </button> -->
             <button @click="checkOut()" class="
                 bg-green-900
                 hover:bg-green-600
@@ -69,30 +69,43 @@
         </div>
       </div>
       <div class="col-span-2">
-        <h1 class="text-white font-semibold bg-slate-400">Select a Table</h1>
+        <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Select Table</h1>
         <div class="grid grid-cols-3 lg:gap-5 py-3">
           <div v-for="table in tableList" :key="table.id">
             <div v-if="table.select == false" @click="selectTable(table.id)" class="
                 pointer
                 text-sm
                 border-2
-                shadow-sm
-                border-slate-600
+                font-bold border-slate-700 
                 rounded
-                hover:bg-slate-800 hover:text-white hover:font-semibold
+                text-white
+                bg-slate-700
+                hover:bg-white hover:text-slate-800 hover:font-semibold
+                
               ">
-              <div>{{ table.name }} #{{ table.id }}</div>
+              <div class="grid grid-rows-2 items-center justify-center">
+                <div> {{ table.name }} #{{ table.id }}</div>
+              <div class="flex items-center justify-center hover:font-semibold">
+                <Icon width="25"  icon="material-symbols:table-restaurant" style="color: white;"/>
+              </div>
+              </div>
+             
+              
             </div>
 
             <div v-else class="
                 pointer
                 text-slate-400
                 border-2
-                shadow-sm
                 border-slate-300
                 rounded
               ">
-              <div>{{ table.name }} #{{ table.id }}</div>
+              <div class="grid grid-rows-2 items-center justify-center">
+                <div> {{ table.name }} #{{ table.id }}</div>
+              <div class="flex items-center justify-center hover:font-semibold">
+                <Icon width="25"  icon="material-symbols:table-restaurant" style="color:slategray;"/>
+              </div>
+              </div>
             </div>
           </div>
         </div>
@@ -102,7 +115,13 @@
 </template>
 
 <script>
+import { Icon } from '@iconify/vue';
+
+ 
 export default {
+  components: {
+    Icon,
+  },
   props: ["id"],
   data() {
     return {
@@ -119,9 +138,19 @@ export default {
       }
     };
   },
-  onMounted(){
+  created(){
+      for (let i = 0; i < this.$store.getters.getOrderList.length; i++) {
+        
+        if (this.$store.getters.getOrderList[i].orderId == this.id) {
 
-  },
+          //this.$store.getters.getOrderList[i].tableNo = tableId;
+          this.orderData.menu = this.$store.getters.getOrderList[i].menu;
+          this.orderData.vat = this.$store.getters.getOrderList[i].vat;
+          this.orderData.serviceCharge = this.$store.getters.getOrderList[i].serviceCharge;
+          this.orderData.totalPrice = this.$store.getters.getOrderList[i].totalPrice;
+        }
+      }
+    },
   computed: {
     orderList() {
       return this.$store.getters.getOrderList;

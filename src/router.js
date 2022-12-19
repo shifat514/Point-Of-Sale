@@ -1,19 +1,19 @@
 import { createWebHistory,createRouter } from 'vue-router'
 
 const routes = [
-    {
-        path: '/',
-        name: 'home',
-        component: () => import('./components/HomePage.vue'),
-    },
+    // {
+    //     path: '/',
+    //     name: 'home',
+    //     component: () => import('./components/HomePage.vue'),
+    // },
     {
         path : '/foodmenu',
         name : 'foodmenu',
         component: () => import('./components/FoodMenu.vue'),
     },
     {
-        path : '/selectmenu',
-        name : 'selectmenu',
+        path : '/',
+        name : 'home',
         component: () => import('./components/SelectMenu.vue'),
     },
     {
@@ -43,6 +43,11 @@ const routes = [
         name : 'paybill',
         props:true,
         component: () => import('./components/PayBill.vue'),
+    },
+    {
+        path : '/transaction/',
+        name : 'transaction',
+        component: () => import('./components/Transaction.vue'),
     },
 
 ]

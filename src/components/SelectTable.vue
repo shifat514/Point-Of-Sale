@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="grid grid-cols-3 m-6">
+    <div class="grid grid-cols-3 p-4 pt-16">
       <div class="bg-blue-50 col-span-1">
         <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Ordered Menu</div>
         <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1">

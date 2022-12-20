@@ -2,8 +2,8 @@
     <div>
         <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Menu</h1>
         <div class="grid grid-cols-3 lg:gap-5 py-3">
-            <div v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
-                <div class="pointer text-sm border-2 shadow-sm border-slate-300 rounded  hover:bg-slate-800 hover:text-white hover:rounded hover:border-slate-800
+            <div class="ml-1" v-for="(item) in findProductList" :key="item" :id=item.id @click="addProduct(item)">
+                <div class="pointer px-1 text-sm border-2 shadow-sm border-slate-300 rounded  hover:bg-slate-800 hover:text-white hover:rounded hover:border-slate-800
                     hover:font-semibold">
                     <div>
                         ID #{{ item.id }}

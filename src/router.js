@@ -53,7 +53,7 @@ const routes = [
 ]
 
 const router =  createRouter({
-    history: createWebHistory(process.env.BASE_URL), //html file history mode
+    history: createWebHistory(import.meta.env.BASE_URL), //html file history mode
     routes
   })
   

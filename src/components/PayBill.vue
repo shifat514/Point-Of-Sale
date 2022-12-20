@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="grid grid-cols-3 m-6">
+    <div class="grid grid-cols-3 p-10 pt-20">
       <div class="bg-blue-50 col-span-1">
         <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Ordered Menu</div>
         <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1">
@@ -49,30 +49,39 @@
       </div>
       <div class="col-span-2">
         <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Pay the Bill</h1>
-        <div class="flex justify-center mt-20">
-          <input v-model="billAmount" type="text" name="price" id="price"
-            class="appearance-none border-2 border-slate-200 focus:border-none focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-md"
-            placeholder="input amount">
-          <span class="mx-2 font-medium">BDT</span>
+        <div v-if="billPaid == false" >
+          <div class="flex justify-center mt-20">
+            <input v-model="billAmount" type="text" name="price" id="price"
+              class="appearance-none border-2 border-slate-200 focus:border-none focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-md"
+              placeholder="input amount">
+            <span class="mx-2 font-medium">BDT</span>
+          </div>
+          <div>{{ billAmount }}</div>
+          <div v-if="billPaid == true"> Amount Paid </div>
+          <div v-else> Enter Amount</div>
+          <button @click="payBill()" class="bg-slate-300 hover:bg-slate-800 text-white rounded-md mt-4 px-4">
+            Pay Bill</button>
         </div>
-        <div>{{ billAmount }}</div>
-        <div v-if="billPaid == true"> Amount Paid </div>
-        <div v-else> Enter Amount</div>
-        <button @click="payBill()" class="bg-slate-300 hover:bg-slate-800 text-white rounded-md mt-4 px-4">
-          Pay Bill</button>
+        <div v-else class="pt-10">
+        <div class="flex justify-center items-center flex-col">
+          <Icon class="green-block" height="10%" icon="ic:twotone-paid" />
+          <div class="text-green-700 text-2xl font-extrabold font-sans">BILL PAID</div>
+        </div>
       </div>
+      </div>
+     
     </div>
   </div>
 </template>
   
 <script>
-//import { Icon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 
 
 export default {
-  // components: {
-  //   Icon,
-  // },
+  components: {
+    Icon,
+  },
   props: ["orderId"],
   data() {
     return {

@@ -1,11 +1,26 @@
 <template>
     <div>
-        <div v-if="isAlert == false" class="grid grid-cols-3 h-screen m-6">
-            <div class="bg-slate-100 col-span-1">
-                <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Selected Menu</div>
-                <h5 v-if="this.id != 0" class="text-slate-700 font-base text-sm py-1"><span class="font-semibold">Order Id</span>#{{ this.orderId }}</h5>
+        <div v-if="isAlert"
+            class="fixed z-50 w-full h-full  bg-slate-400 bg-opacity-50 flex justify-center items-center">
+            <div class="absolute  bg-white rounded shadow-lg w-1/3 justify-center items-center">
+                <div class="px-4 py-2">
+                    <p>Are you sure you want to remove this item?</p>
+                </div>
+                <div class="flex justify-end items-center w-100 border-t p-3">
+                    <button @click="isAlert = false"
+                        class="bg-gray-500 hover:bg-slate-700 text-white px-3 py-1 rounded mr-1">Cancel</button>
+                    <button @click="removeProduct()"
+                        class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded mr-1">Yes</button>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 w-screen h-screen p-4 pt-16">
+            <div class="bg-slate-100 col-span-1 h-full relative">
+                <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700 ">Selected Menu</div>
+                <h5 v-if="this.id != 0" class="text-slate-700 font-base text-sm py-1"><span class="font-semibold">Order
+                        Id</span>#{{ this.orderId }}</h5>
                 <div class=" bg-slate-100 flex justify-center ">
-                    <div class="grid grid-rows-1 static py-2">
+                    <div class="py-2">
                         <table class="w-full table-auto">
                             <thead>
                                 <tr>
@@ -21,16 +36,16 @@
                                     <td>{{ item.name }}</td>
                                     <td class="flex justify-center px-3 py-1">
                                         <button @click="decreaseQuantity(item, index)" class="h-5 w-5 border-2 flex items-center justify-center
-                                         border-red-400 text-red-400  
-                                         cursor-pointer rounded-full font-bold">
+                                      border-red-400 text-red-400  
+                                      cursor-pointer rounded-full font-bold">
                                             <div>-</div>
                                         </button>
                                         <span class="px-2">
                                             {{ item.quantity }}
                                         </span>
                                         <button @click="increaseQuantity(item, index)" class="h-5 w-5 border-2 flex items-center justify-center
-                                         border-emerald-300 text-green-700  
-                                         cursor-pointer rounded-full font-bold">
+                                      border-emerald-300 text-green-700  
+                                      cursor-pointer rounded-full font-bold">
                                             <div>+</div>
                                         </button>
                                     </td>
@@ -80,32 +95,22 @@
                                 </div>
                             </div>
                         </div>
-                        <button v-if="disabled==false"  @click="confirmOrder()" class="bg-green-900 hover:bg-green-600 text-white rounded-lg py-1 px-2 ">Confirm Order</button>
+                        <button 
+                          v-if="disabled == false" @click="confirmOrder()"
+                          class="bg-green-900 hover:bg-green-600 text-white rounded-lg py-1 px-2 "
+                        >
+                          Confirm Order
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="col-span-2" >
+            <div class="col-span-2">
                 <FoodMenu @selectProduct="addedProduct" />
             </div>
         </div>
 
-        <div v-else class="bg-gray-400 flex justify-center">
-            <div class="grid h-screen place-items-center bg-black bg-opacity-50">
-                <div class="bg-white rounded shadow-lg w-1/3 fixed  justify-center items-center">
-                    <div class="px-4 py-2">
-                        <p>Are you sure you want to remove this item?</p>
-                    </div>
-                    <div class="flex justify-end items-center w-100 border-t p-3">
-                        <button @click="isAlert = false;"
-                            class="bg-gray-500 hover:bg-slate-700 text-white px-3 py-1 rounded mr-1">Cancel</button>
-                        <button @click="removeProduct()"
-                            class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded mr-1">Yes</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
     </div>
+
 </template>
 
 <script>
@@ -129,14 +134,14 @@ export default {
             extraCharge: 0,
             totalCharge: 0,
             selectedIndex: 0,
-            disabled:true,
-            chargeFromOrder:0,
+            disabled: true,
+            chargeFromOrder: 0,
             selectedItem: {
                 id: 0,
                 name: '',
                 quantity: 0,
                 price: 0,
-            },       
+            },
         };
     },
 
@@ -150,17 +155,17 @@ export default {
         orderList() {
             return this.$store.getters.getOrderList;
         }
-        
+
     },
 
     methods: {
-        
+
         confirmOrder() {
-            
+
             this.orderId = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
             console.log(this.selectCharge);
             let orderData = {
-                orderId : this.orderId,
+                orderId: this.orderId,
                 menu: this.selectProductList,
                 vat: this.vat,
                 tableNo: null,
@@ -169,27 +174,26 @@ export default {
                 totalPrice: this.totalCharge,
                 paidBill: false,
             };
-            
+
             console.log("amr orderData", orderData);
-            this.$store.dispatch("addOrder",orderData);
+            this.$store.dispatch("addOrder", orderData);
             this.$store.commit("resetSelectState");
             console.log(this.orderList);
-            this.$router.push('/selecttable/'+this.orderId);
-           
+            this.$router.push('/selecttable/' + this.orderId);
+
         },
 
         removeProduct() {
             this.removeItem = true;
             if (this.removeItem == true) {
 
-                 this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price; 
-                 this.$store.getters.getSelectList[this.selectedIndex].quantity -= 1;
-                 this.selectCharge -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price; 
-                 this.calculateCharges(this.selectCharge);
+                this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price;
+                this.$store.getters.getSelectList[this.selectedIndex].quantity -= 1;
+                this.selectCharge -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price;
+                this.calculateCharges(this.selectCharge);
                 this.$store.dispatch('removeProduct', this.selectedIndex);
                 this.isAlert = false;
-                if(this.$store.getters.selectListLength == 0)
-                {
+                if (this.$store.getters.selectListLength == 0) {
                     this.disabled = true;
                 }
             }
@@ -207,7 +211,7 @@ export default {
             else {
                 this.$store.getters.getSelectList.find(element => element.id == item.id).price -= this.$store.getters.getProductList.find(element => element.id == item.id).price;
                 this.$store.getters.getSelectList[index].quantity -= 1;
-                this.selectCharge -=  this.$store.getters.getProductList.find(element => element.id == item.id).price;
+                this.selectCharge -= this.$store.getters.getProductList.find(element => element.id == item.id).price;
                 this.calculateCharges(this.selectCharge);
             }
         },
@@ -215,7 +219,7 @@ export default {
         increaseQuantity(item, index) {
             this.$store.getters.getSelectList.find(element => element.id == item.id).price += this.$store.getters.getProductList.find(element => element.id == item.id).price;
             this.$store.getters.getSelectList[index].quantity += 1;
-            this.selectCharge +=  this.$store.getters.getProductList.find(element => element.id == item.id).price;
+            this.selectCharge += this.$store.getters.getProductList.find(element => element.id == item.id).price;
             this.calculateCharges(this.selectCharge);
         },
 
@@ -267,4 +271,5 @@ export default {
 </script>
 
 <style>
+
 </style>

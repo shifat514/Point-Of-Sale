@@ -49,27 +49,27 @@
       </div>
       <div class="col-span-2">
         <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Pay the Bill</h1>
-        <div v-if="billPaid == false" >
-          <div class="flex justify-center mt-20">
-            <input v-model="billAmount" type="text" name="price" id="price"
-              class="appearance-none border-2 border-slate-200 focus:border-none focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-md"
+        <div v-if="billPaid == false">
+          <div class="flex justify-center items-center mt-20">
+              <input v-model="billAmount" type="text" name="price" id="price"
+              class="appearance-none border-2 h-10 w-1/3 border-slate-200 focus:border-none  
+              focus:outline-none focus:ring-2 focus:ring-slate-400 focus:bg-white rounded-md pl-4"
               placeholder="input amount">
-            <span class="mx-2 font-medium">BDT</span>
+              <!-- <span class="mx-2 font-bold text-lg font-sans">BDT</span> -->
+            
+              <button  v-if="disabled == false" @click="payBill()"
+                class=" h-9 border-2 border-green-300 text-green-300 hover:text-white hover:bg-green-700  rounded-md  px-3 ml-1 font-semibold ">
+                Pay</button>
           </div>
-          <div>{{ billAmount }}</div>
-          <div v-if="billPaid == true"> Amount Paid </div>
-          <div v-else> Enter Amount</div>
-          <button @click="payBill()" class="bg-slate-300 hover:bg-slate-800 text-white rounded-md mt-4 px-4">
-            Pay Bill</button>
         </div>
         <div v-else class="pt-10">
-        <div class="flex justify-center items-center flex-col">
-          <Icon class="green-block" height="10%" icon="ic:twotone-paid" />
-          <div class="text-green-700 text-2xl font-extrabold font-sans">BILL PAID</div>
+          <div class="flex justify-center items-center flex-col">
+            <Icon class="green-block" height="10%" icon="ic:twotone-paid" />
+            <div class="text-green-700 text-2xl font-extrabold font-sans">BILL PAID</div>
+          </div>
         </div>
       </div>
-      </div>
-     
+
     </div>
   </div>
 </template>
@@ -96,7 +96,7 @@ export default {
         serviceCharge: 0,
         totalPrice: 0,
       },
-      billAmount: 0,
+      billAmount: null,
       billPaid: false,
     };
   },
@@ -120,7 +120,21 @@ export default {
       return this.$store.getters.getTableList;
     },
   },
+  watch: {
+    billAmount() {
+      console.log(this.billAmount);
+      for (let i = 0; i < this.orderList.length; i++) {
+        if (this.orderList[i].totalPrice == this.billAmount) {
+         this.disabled = false;
+        }
+        else {
+          this.disabled = true;
+        }
+      }
+    },
+  },
   methods: {
+
 
 
     payBill() {

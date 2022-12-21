@@ -122,7 +122,6 @@ export default {
   },
   watch: {
     billAmount() {
-      console.log(this.billAmount);
       for (let i = 0; i < this.orderList.length; i++) {
         if (this.orderList[i].totalPrice == this.billAmount) {
          this.disabled = false;
@@ -134,9 +133,6 @@ export default {
     },
   },
   methods: {
-
-
-
     payBill() {
       for (let i = 0; i < this.orderList.length; i++) {
         if (this.orderList[i].totalPrice == this.billAmount) {

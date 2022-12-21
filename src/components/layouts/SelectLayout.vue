@@ -1,13 +1,14 @@
 <template>
     <div>
-        hello
     <SelectMenu/>
+    <slot></slot>
+    <!-- <FoodMenu/> -->
     </div>
  
 </template>
 
 <script>
-//import FoodMenu from "../FoodMenu.vue"
+// import FoodMenu from "../FoodMenu.vue"
 import SelectMenu from "../SelectMenu.vue"
 export default {
     data() {

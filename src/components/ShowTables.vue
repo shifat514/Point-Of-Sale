@@ -240,8 +240,10 @@ export default {
                                 this.orderList[i].menu[j].quantity -= 1;
                                 this.orderList[i].menu[j].price -= productFromProductList.price;
                                 this.orderList[i].basicCharge -= productFromProductList.price;
-                                this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
-                                this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                                if(this.orderList[i].menu[j].vat == true) {
+                                    this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
+                                    this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                                }
                                 this.orderList[i].totalPrice = this.orderList[i].basicCharge + this.orderList[i].vat + this.orderList[i].serviceCharge;
                                 this.getOrderDetails();
                             }
@@ -262,15 +264,17 @@ export default {
                         this.orderList[i].menu[j].quantity += 1;
                         this.orderList[i].menu[j].price += productFromProductList.price;
                         this.orderList[i].basicCharge += productFromProductList.price;
-                        this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
-                        this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                        if(this.orderList[i].menu[j].vat == true) {
+                            this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
+                            this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
+                        }
                         this.orderList[i].totalPrice = this.orderList[i].basicCharge + this.orderList[i].vat + this.orderList[i].serviceCharge;
                         this.getOrderDetails();
                     }
                 }
             }
         },
-
+        
         orderAgain() {
             this.$router.push("/selectMenu/");
         },

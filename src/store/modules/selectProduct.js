@@ -13,8 +13,12 @@ const mutations = {
     addMenu(state, payload) {
         state.selectList.push(payload);
     },
+    // removeFromMenu(state,payload) {
+    //     state.selectList.splice(payload,1);
+    // },
     removeFromMenu(state,payload) {
-        state.selectList.splice(payload,1);
+        let productIndex= state.selectList.findIndex(element=> element.id == payload.id);       
+         state.selectList.splice(productIndex,1);
     },
 
     resetSelectState (state) {

@@ -17,6 +17,7 @@
                     </div>
                 </div>
             </div>
+            <div class="text-xs p-2">*Vat and Service Charge is not applicable on water and cold drinks*</div>
         </div>
 
     </div>

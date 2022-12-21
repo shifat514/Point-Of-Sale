@@ -35,7 +35,7 @@
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.name }}</td>
                                     <td class="flex justify-center px-3 py-1">
-                                        <button @click="decreaseQuantity(item, index)" class="h-5 w-5 border-2 flex items-center justify-center
+                                        <button @click="decreaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
                                       border-red-400 text-red-400  
                                       cursor-pointer rounded-full font-bold">
                                             <div>-</div>
@@ -43,7 +43,7 @@
                                         <span class="px-2">
                                             {{ item.quantity }}
                                         </span>
-                                        <button @click="increaseQuantity(item, index)" class="h-5 w-5 border-2 flex items-center justify-center
+                                        <button @click="increaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
                                       border-emerald-300 text-green-700  
                                       cursor-pointer rounded-full font-bold">
                                             <div>+</div>
@@ -57,6 +57,7 @@
                 </div>
                 <div class="absolute bottom-20 flex justify-center">
                     <div class="">
+
                         <div class="grid grid-cols-2">
                             <div>
                                 <div>
@@ -95,11 +96,9 @@
                                 </div>
                             </div>
                         </div>
-                        <button 
-                          v-if="disabled == false" @click="confirmOrder()"
-                          class="bg-green-900 hover:bg-green-600 text-white rounded-lg py-1 px-2 "
-                        >
-                          Confirm Order
+                        <button v-if="disabled == false" @click="confirmOrder()"
+                            class="bg-green-900 hover:bg-green-600 text-white rounded-lg py-1 px-2 ">
+                            Confirm Order
                         </button>
                     </div>
                 </div>
@@ -124,6 +123,7 @@ export default {
                 name: '',
                 quantity: 0,
                 price: 0,
+                vat: Boolean,
             },
             orderId: 0,
             isAlert: false,
@@ -133,7 +133,7 @@ export default {
             serviceCharge: 0,
             extraCharge: 0,
             totalCharge: 0,
-            selectedIndex: 0,
+          
             disabled: true,
             chargeFromOrder: 0,
             selectedItem: {
@@ -141,7 +141,12 @@ export default {
                 name: '',
                 quantity: 0,
                 price: 0,
+                vat: Boolean,
             },
+            productQuantity: 0,
+            increasedProductPrice: 0,
+            chargesWithVat: 0,
+            chargesWithOutVat: 0,
         };
     },
 
@@ -152,10 +157,12 @@ export default {
         selectProductList() {
             return this.$store.getters.getSelectList;
         },
+        getProductList() {
+            return this.$store.getters.getProductList;
+        },
         orderList() {
             return this.$store.getters.getOrderList;
         }
-
     },
 
     methods: {
@@ -163,7 +170,6 @@ export default {
         confirmOrder() {
 
             this.orderId = Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
-            console.log(this.selectCharge);
             let orderData = {
                 orderId: this.orderId,
                 menu: this.selectProductList,
@@ -174,11 +180,8 @@ export default {
                 totalPrice: this.totalCharge,
                 paidBill: false,
             };
-
-            console.log("amr orderData", orderData);
             this.$store.dispatch("addOrder", orderData);
             this.$store.commit("resetSelectState");
-            console.log(this.orderList);
             this.$router.push('/selecttable/' + this.orderId);
 
         },
@@ -187,11 +190,9 @@ export default {
             this.removeItem = true;
             if (this.removeItem == true) {
 
-                this.$store.getters.getSelectList[this.selectedIndex].price -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price;
-                this.$store.getters.getSelectList[this.selectedIndex].quantity -= 1;
-                this.selectCharge -= this.$store.getters.getProductList.find(element => element.id == this.selectedItem.id).price;
-                this.calculateCharges(this.selectCharge);
-                this.$store.dispatch('removeProduct', this.selectedIndex);
+                this.selectProductList.find(element => element.id == this.selectedItem.id).quantity -=1;
+                this.$store.dispatch('removeProduct', this.selectedItem);
+                this.calculateCharges();
                 this.isAlert = false;
                 if (this.$store.getters.selectListLength == 0) {
                     this.disabled = true;
@@ -201,39 +202,57 @@ export default {
                 this.isAlert = false;
             }
         },
-        decreaseQuantity(item, index) {
+        decreaseQuantity(item) {
 
             if (item.quantity == 1) {
                 this.isAlert = true;
-                this.selectedIndex = index;
                 this.selectedItem = item;
             }
             else {
-                this.$store.getters.getSelectList.find(element => element.id == item.id).price -= this.$store.getters.getProductList.find(element => element.id == item.id).price;
-                this.$store.getters.getSelectList[index].quantity -= 1;
-                this.selectCharge -= this.$store.getters.getProductList.find(element => element.id == item.id).price;
-                this.calculateCharges(this.selectCharge);
+             
+                this.selectProductList.find(element => element.id == item.id).quantity -= 1;
+                this.calculateCharges();
             }
         },
 
-        increaseQuantity(item, index) {
-            this.$store.getters.getSelectList.find(element => element.id == item.id).price += this.$store.getters.getProductList.find(element => element.id == item.id).price;
-            this.$store.getters.getSelectList[index].quantity += 1;
-            this.selectCharge += this.$store.getters.getProductList.find(element => element.id == item.id).price;
-            this.calculateCharges(this.selectCharge);
+        increaseQuantity(item) {
+            this.selectProductList.find(element => element.id == item.id).quantity += 1;
+            this.calculateCharges();
         },
 
-        calculateCharges(basicCharge) {
+        calculateCharges() { 
+            this.selectCharge = 0;
+            this.vat =0;
+            this.serviceCharge = 0;
+            this.extraCharge = 0;
+            this.totalCharge =0;
+            this.chargesWithVat = 0;
+            this.chargesWithOutVat = 0;
+            for (let i = 0; i < this.selectProductList.length; i++) {
 
-            this.vat = .05 * basicCharge;
-            this.serviceCharge = .10 * basicCharge;
-            this.extraCharge = this.vat + this.serviceCharge;
-            this.totalCharge = basicCharge + this.extraCharge;
+                let selectedProductQuantity = this.selectProductList[i].quantity;
+                let productOriginalPrice = this.getProductList.find(element => element.id == this.selectProductList[i].id).price;
+                this.selectProductList[i].price = selectedProductQuantity * productOriginalPrice;
+               
+                if(this.selectProductList[i].vat == true) {
+                    this.chargesWithVat +=this.selectProductList[i].price;
+                    this.vat = .05 * this.chargesWithVat;
+                    this.serviceCharge = .10 * this.chargesWithVat;
+                    this.extraCharge += this.vat + this.serviceCharge;
+                    this.totalCharge +=this.chargesWithVat + this.extraCharge;          
+                }
+                else {
+                    this.chargesWithOutVat +=this.selectProductList[i].price;
+                    this.totalCharge += this.chargesWithOutVat + this.extraCharge;
+                }
+            }
+            this.selectCharge = this.chargesWithVat + this.chargesWithOutVat;
+            this.totalCharge = this.selectCharge + this.extraCharge;
         },
 
         selectedProduct(listLength) {
             if (listLength < 1) {
-                this.selectCharge += this.menu.price;
+
                 this.menu.quantity += 1;
                 this.$store.dispatch('selectMenu', this.menu);
                 this.disabled = false;
@@ -241,17 +260,15 @@ export default {
             } else {
                 let flag = 0;
                 for (let i = 0; i < listLength; i++) {
-                    if (this.menu.id === this.$store.getters.getSelectList[i].id) {
+                    if (this.menu.id === this.selectProductList[i].id) {
+                        
                         flag = 1;
-                        this.$store.getters.getSelectList[i].price += this.menu.price;
-                        this.$store.getters.getSelectList[i].quantity += 1;
-                        this.selectCharge += this.menu.price;
+                        this.selectProductList[i].quantity += 1;
                         this.disabled = false;
                     }
                 }
                 if (flag == 0) {
                     this.menu.quantity += 1;
-                    this.selectCharge += this.menu.price;
                     this.$store.dispatch('selectMenu', this.menu);
                     this.disabled = false;
                 }
@@ -263,7 +280,7 @@ export default {
             this.menu = JSON.parse(JSON.stringify(selectData)); // deep cloning an object
             let selectListLength = this.$store.getters.selectListLength;
             this.selectedProduct(selectListLength);
-            this.calculateCharges(this.selectCharge);
+            this.calculateCharges();
         },
 
     },

@@ -1,11 +1,11 @@
 <template>
-    <div class="container">
+    <div>
         <div v-if="isAlert == false" class="grid grid-cols-3 p-4 pt-16">
-            <div class="bg-blue-50 col-span-1">
+            <div class="bg-blue-50 2xl:col-span-1 xl:col-span-1 lg:col-span-1 md:col-span-2 col-span-3">
                 <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Ordered Menu</div>
                 <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1"><span class="font-semibold">Order
                         Id</span>#{{ this.orderId }}</h5>
-                <div class="flex justify-center ">
+                <!-- <div class="flex justify-center ">
                     <div class="grid grid-rows-1 static py-2">
                         <table class="w-full table-auto">
                             <thead>
@@ -43,8 +43,95 @@
                             </tbody>
                         </table>
                     </div>
+                </div> -->
+
+                <div class="grid grid-rows-4 bg-slate-100 justify-center ">
+                    <div class="row-span-3">
+                        <table class="table-auto">
+                            <thead>
+                                <tr>
+                                    <th class="w-1/6 px-5">Id</th>
+                                    <th class="w-1/6 px-5">Name</th>
+                                    <th class="w-1/6 px-5">Quantity</th>
+                                    <th class="w-1/6 px-5">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody v-if="isTableSelect == true" class="text-sm">
+                                <tr class="pointer" v-for="(item) in orderData.menu" :key="item.id">
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td class="flex justify-center px-3">
+                                        <button v-if="isUpdateOrder == true" @click="decreaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
+                                         border-red-400 text-red-400  
+                                         cursor-pointer rounded-full font-bold">
+                                            <div>-</div>
+                                        </button>
+
+                                        <span class="px-2">
+                                            {{ item.quantity }}
+                                        </span>
+
+                                        <button v-if="isUpdateOrder == true" @click="increaseQuantity(item)" class="h-5 w-5 border-2 flex items-center justify-center
+                                         border-emerald-300 text-green-700  
+                                         cursor-pointer rounded-full font-bold">
+                                            <div>+</div>
+                                        </button>
+                                    </td>
+                                    <td>{{ item.price }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div v-if="isTableSelect == true" class="bg-slate-200 py-2 row-span-1 text-sm">
+                        <div>
+                            <div class="grid grid-cols-3 h">
+                                <div class="flex justify-start col-span-2">
+                                    <div class="p-1">
+                                        <div class="flex justify-start">
+                                            VAT (5%)
+                                        </div>
+                                        <div class="flex justify-start">
+                                            Service Charge (10%)
+                                        </div>
+                                        <div class="flex justify-start">
+                                            Total Price
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="flex justify-end col-span-1">
+                                    <div>
+                                        <div>
+                                            {{ orderData.vat }} BDT
+                                        </div>
+                                        <div>
+                                            {{ orderData.serviceCharge }} BDT
+                                        </div>
+
+                                        <div>
+                                            {{ orderData.totalPrice }} BDT
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3">
+                                <div @click="orderAgain()"
+                                    class="bg-gray-700 hover:bg-cyan-200 hover:text-cyan-800  text-white rounded-sm py-1 px-2 ">
+                                    Order
+                                    again
+                                </div>
+                                <div @click="updateOrder()" class="bg-cyan-700 hover:bg-cyan-200 hover:text-cyan-800 
+                                 text-white rounded-sm py-1 px-2 ">Update Order
+                                </div>
+                                <div @click="goToPayBill()" class="bg-green-900 hover:bg-green-600 text-white 
+                                rounded-sm py-1 px-2 ">Pay Bill
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div v-if="isTableSelect == true" class="absolute bottom-20 flex justify-center">
+                <!-- <div v-if="isTableSelect == true" class="bottom-20 flex justify-center">
                     <div class="">
                         <div class="grid grid-cols-2">
                             <div>
@@ -88,11 +175,14 @@
                         <button @click="goToPayBill()"
                             class="bg-green-900 hover:bg-green-600 text-white rounded-md py-1 px-2 ">Pay Bill</button>
                     </div>
-                </div>
+                </div> -->
+
+
             </div>
-            <div class="col-span-2">
+            <div class="2xl:col-span-2 xl:col-span-2 lg:col-span-2 md:col-span-1 col-span-3">
                 <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Show Table Orders</h1>
-                <div class="grid grid-cols-3 lg:gap-5 py-3">
+                <div
+                    class="grid 2xl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-3 py-3 ml-1">
                     <div v-for="table in tableList" :key="table.id">
 
                         <div v-if="table.select == false" class="pointer 
@@ -104,21 +194,22 @@
                         
                         hover:bg-white hover:text-slate-800 
                          hover:font-semibold">
-                         <div class="grid grid-rows-2 items-center justify-center">
-                            <div> {{ table.name }} #{{ table.id }}</div>
-                        <div class="flex items-center justify-center hover:font-semibold">
-                            <Icon width="25"  icon="material-symbols:table-restaurant" style="color: white;"/>
-                        </div>
-                        </div>
+                            <div class="grid grid-rows-2 items-center justify-center">
+                                <div> {{ table.name }} #{{ table.id }}</div>
+                                <div class="flex items-center justify-center hover:font-semibold">
+                                    <Icon width="25" icon="material-symbols:table-restaurant" style="color: white;" />
+                                </div>
+                            </div>
                         </div>
 
                         <div v-else @click="showTables(table.id)"
                             class="pointer rounded text-sm  text-slate-400 border-2 shadow-sm border-slate-300 ">
                             <div class="grid grid-rows-2 items-center justify-center">
-                            <div> {{ table.name }} #{{ table.id }}</div>
-                            <div class="flex items-center justify-center hover:font-semibold">
-                                <Icon width="25"  icon="material-symbols:table-restaurant" style="color:slategray;"/>
-                            </div>
+                                <div> {{ table.name }} #{{ table.id }}</div>
+                                <div class="flex items-center justify-center hover:font-semibold">
+                                    <Icon width="25" icon="material-symbols:table-restaurant"
+                                        style="color:slategray;" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,7 +242,7 @@
 import { Icon } from '@iconify/vue';
 export default {
     components: {
-    Icon,
+        Icon,
     },
     data() {
         return {
@@ -189,14 +280,14 @@ export default {
 
     methods: {
         goToPayBill() {
-            this.$router.push('/paybill/'+this.orderId);
+            this.$router.push('/paybill/' + this.orderId);
         },
         updateOrder() {
             this.isUpdateOrder = true;
         },
         removeProduct() {
-           // this.removeItem = true;
-           // this.decreaseQuantity(this.itemToRemove);
+            // this.removeItem = true;
+            // this.decreaseQuantity(this.itemToRemove);
         },
         getOrderDetails() {
             for (let i = 0; i < this.orderList.length; i++) {
@@ -234,13 +325,13 @@ export default {
                         else {
                             if (this.orderList[i].menu[j].quantity == 1) {
                                 this.itemToRemove = item;
-                               // this.isAlert = true;
+                                // this.isAlert = true;
                             }
                             else {
                                 this.orderList[i].menu[j].quantity -= 1;
                                 this.orderList[i].menu[j].price -= productFromProductList.price;
                                 this.orderList[i].basicCharge -= productFromProductList.price;
-                                if(this.orderList[i].menu[j].vat == true) {
+                                if (this.orderList[i].menu[j].vat == true) {
                                     this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
                                     this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
                                 }
@@ -264,7 +355,7 @@ export default {
                         this.orderList[i].menu[j].quantity += 1;
                         this.orderList[i].menu[j].price += productFromProductList.price;
                         this.orderList[i].basicCharge += productFromProductList.price;
-                        if(this.orderList[i].menu[j].vat == true) {
+                        if (this.orderList[i].menu[j].vat == true) {
                             this.orderList[i].vat = .05 * this.orderList[i].basicCharge;
                             this.orderList[i].serviceCharge = .10 * this.orderList[i].basicCharge;
                         }
@@ -274,7 +365,7 @@ export default {
                 }
             }
         },
-        
+
         orderAgain() {
             this.$router.push("/selectMenu/");
         },

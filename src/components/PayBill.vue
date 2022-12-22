@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
+  <div>
     <div class="grid grid-cols-3 p-10 pt-20">
-      <div class="bg-blue-50 col-span-1">
+      <div class="bg-blue-50 2xl:col-span-1 xl:col-span-1 lg:col-span-1 md:col-span-2 col-span-3">
         <div class="text-white border-2 border-slate-700 font-semibold bg-slate-700">Ordered Menu</div>
         <h5 class="text-slate-700 bg-slate-200 font-base text-sm py-1">
           <span class="font-semibold">Order Id</span>#{{ this.orderId }}
         </h5>
-        <div class="flex justify-center">
-          <div class="grid grid-rows-1 static py-2">
+        <div class="grid grid-rows-4 justify-center">
+          <div class="row-span-3 py-2">
             <table class="w-full table-auto">
               <thead>
                 <tr>
@@ -27,27 +27,47 @@
               </tbody>
             </table>
           </div>
-        </div>
-        <div class="absolute bottom-20 flex justify-center">
-          <div class="">
-            <div class="grid grid-cols-2">
-              <div>
-                <div>VAT (5%)</div>
-                <div>Service Charge (10%)</div>
-                <div>Total Price</div>
-              </div>
-              <div>
-                <div>
-                  <div>{{ orderData.vat }} BDT</div>
-                  <div>{{ orderData.serviceCharge }} BDT</div>
-                  <div>{{ orderData.totalPrice }} BDT</div>
-                </div>
-              </div>
+          <div class="bg-slate-200 py-2 row-span-1 text-sm">
+                      <div>
+                          <div class="grid grid-cols-3 h">
+                              <div class="flex justify-start col-span-2">
+                                  <div class="p-1">
+                                      <div class="flex justify-start">
+                                          VAT (5%)
+                                      </div>
+                                      <div class="flex justify-start">
+                                          Service Charge (10%)
+                                      </div>
+                                      <div class="flex justify-start">
+                                          Total Price
+                                      </div>
+                                  </div>
+  
+                              </div>
+                              <div class="flex justify-end col-span-1">
+                                  <div>
+                                  
+                                      <div>
+                                          {{ orderData.vat }} BDT
+                                      </div>
+                                      <div>
+                                          {{ orderData.serviceCharge }} BDT
+                                      </div>
+  
+                                      <div>
+                                          {{ orderData.totalPrice }} BDT
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                         
+                          
+                      </div>
+  
             </div>
-          </div>
         </div>
       </div>
-      <div class="col-span-2">
+      <div class="2xl:col-span-2 xl:col-span-2 lg:col-span-2 md:col-span-1 col-span-3">
         <h1 class="text-slate-700 border-2 border-slate-700 font-semibold bg-white">Pay the Bill</h1>
         <div v-if="billPaid == false">
           <div class="flex justify-center items-center mt-20">
@@ -55,8 +75,7 @@
               class="appearance-none border-2 h-10 w-1/3 border-slate-200 focus:border-none  
               focus:outline-none focus:ring-2 focus:ring-slate-400 focus:bg-white rounded-md pl-4"
               placeholder="input amount">
-              <!-- <span class="mx-2 font-bold text-lg font-sans">BDT</span> -->
-            
+      
               <button  v-if="disabled == false" @click="payBill()"
                 class=" h-9 border-2 border-green-300 text-green-300 hover:text-white hover:bg-green-700  rounded-md  px-3 ml-1 font-semibold ">
                 Pay</button>
@@ -123,8 +142,11 @@ export default {
   watch: {
     billAmount() {
       for (let i = 0; i < this.orderList.length; i++) {
+        console.log(this.orderList[i].totalPrice);
+        console.log(this.billAmount)
         if (this.orderList[i].totalPrice == this.billAmount) {
          this.disabled = false;
+         break;
         }
         else {
           this.disabled = true;
